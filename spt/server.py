@@ -4,13 +4,9 @@ import socket
 import threading
 import os
 
-s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-s.bind(('192.168.1.7',6000))
-s.listen()
-print("Server is running...")
 
 
-def getFile(fileName):
+def getFile(fileName,client):
     fileName = fileName.replace('Get','') # remove Get in file name
     fileName = fileName.replace(' ','') # remove whitespaces
     try:
@@ -65,22 +61,36 @@ def allFiles(client):
     client.close()
 
 
- 
-data = "data"
-while True:
-    client , addr = s.accept()
+
+def handle(client,addr):
     print(str(addr)+" has connected to the server!")
-    fileName = client.recv(1024).decode()
-    if 'Get' in fileName:
-        getFile(fileName)
-    elif 'Put' in fileName:
-        sendFile(fileName,client)
-    elif 'ls' in fileName:
-        allFiles(client)
-        
+    while True:
+        fileName = client.recv(1024).decode()
+        if 'Get' in fileName:
+            getFile(fileName,client)
+            break
+        elif 'Put' in fileName:
+            sendFile(fileName,client)
+            break
+        elif 'ls' in fileName:
+            allFiles(client)
+            break
 
+            
 
- 
+def start():
+    print("Server is running...")
+    s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+    s.bind(('192.168.1.7',6000))
+    while True:
+        s.listen()
+        client , addr = s.accept()
+        t1 = threading.Thread(target=handle,args=(client,addr))
+        t1.start()
+
+if __name__ == "__main__":
+    start()
+
      
 
 
