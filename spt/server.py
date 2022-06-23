@@ -81,7 +81,7 @@ def handle(client,addr):
 def start():
     print("Server is running...")
     s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-    s.bind(('192.168.1.7',6000))
+    s.bind(('192.168.1.8',6000))
     while True:
         s.listen()
         client , addr = s.accept()

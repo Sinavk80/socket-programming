@@ -1,4 +1,4 @@
-import os
+import math
 import socket
 
 
@@ -16,6 +16,10 @@ def getFile(fileName):
         else:
             file = open(fileName,'wb')
             if not mes:
+                progressBar(0,len(numbers)) #progress = 0 and totla=len(numbers)
+                for i,x in enumerate(numbers):
+                    results.append(math.factorial(x)) #append fact(x) to result list
+                    progressBar(i+1,len(numbers)) #updating the bar
                 print('file transformed!')
                 file.close()
                 break
@@ -32,6 +36,10 @@ def sendFile(fileName):
         while True:
             context = file.read(1024)
             if not context:
+                progressBar(0,len(numbers))
+                for i,x in enumerate(numbers):
+                    results.append(math.factorial(x))
+                    progressBar(i+1,len(numbers))
                 print("file transformed!")
                 file.close()
                 break
@@ -48,7 +56,15 @@ def allFiles():
             if not data:
                 break
             print(data.decode())
-        
+    
+#progress bar function
+def progressBar(progress,total):
+    percent = 100 * (progress/float(total)) #percentage of charachters
+    bar = '#' * int(percent)+ '-'*(100-int(percent))
+    print(f"\r|{bar}|{percent:.2f}%",end='\r')
+
+numbers = [x for x in range(4000,5000)]
+results = []
 
 
 
@@ -56,7 +72,7 @@ def allFiles():
 
 while True:
     s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-    host = '192.168.1.7'
+    host = '192.168.1.8'
     port = 6000
     s.connect((host,port))
     fileName = input('Enter the instruction:')
